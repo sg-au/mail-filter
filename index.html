@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-info-00">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <title>Email Filter</title>
+    <style>
+        .dropdown-content {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .dropdown.is-active .dropdown-menu {
+            display: block;
+        }
+    </style>
+</head>
+<body class="has-text-white is-family-code">
+    <div class="columns is-centered">
+        <nav class="navbar has-background-info-00 mt-6" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+                <img src="https://typeset-partner-institution.s3.us-west-2.amazonaws.com/ashoka/organization/tds-logo-ashoka.png" width="320" height="80" />
+            </div>
+        </nav>
+    </div>
+
+    <div class="columns is-centered mt-6 pt-6">
+        <div class="column is-two-thirds">
+            <h2 class="is-size-3">Search and Select Emails</h2>
+
+            <!-- Labels Section -->
+            <div class="box">
+                <h3 class="is-size-4">Labels</h3>
+                <div class="field">
+                    <div class="control has-icons-left">
+                        <input class="input is-primary" type="text" id="searchBarLabels" placeholder="Search by name or email (Labels)" onkeyup="filterEmails('Label')" onfocus="openDropdown('Label')">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="dropdown" id="dropdownMenuLabels">
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content" id="dropdownContentLabels"></div>
+                    </div>
+                </div>
+
+                <!-- Selected items for Labels -->
+                <div id="selectedItemsLabels" class="mt-3"></div>
+            </div>
+
+            <!-- Socials Section -->
+            <div class="box">
+                <h3 class="is-size-4">Socials</h3>
+                <div class="field">
+                    <div class="control has-icons-left">
+                        <input class="input is-primary" type="text" id="searchBarSocials" placeholder="Search by name or email (Socials)" onkeyup="filterEmails('Social')" onfocus="openDropdown('Social')">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="dropdown" id="dropdownMenuSocials">
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content" id="dropdownContentSocials"></div>
+                    </div>
+                </div>
+
+                <!-- Selected items for Socials -->
+                <div id="selectedItemsSocials" class="mt-3"></div>
+            </div>
+
+            <!-- Checkboxes for Google Classroom and Shared files -->
+            <div class="field">
+                <label class="checkbox">
+                    <input type="checkbox" id="googleClassroomCheckbox"> Google Classroom
+                </label>
+            </div>
+            <div class="field">
+                <label class="checkbox">
+                    <input type="checkbox" id="sharedFilesCheckbox"> Shared Files
+                </label>
+            </div>
+
+            <!-- Generate File Button -->
+            <button class="button is-primary mt-5" onclick="generateXML()">Generate File</button>
+        </div>
+    </div>
+
+    <script>
+        // Example data from CSV (you can replace this part with the actual data)
+        const emailData = [
+        { Name: " Anime Club", Email: "anime@ashoka.edu.in", Type: "Club" },
+    { Name: "Art and Design Collective", Email: "adc@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka Business Club", Email: "businessclub@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka Consulting  Club", Email: "consulting@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka Debating Union", Email: "debating@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka Investments Club", Email: "investmentsclub@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka MUN Club", Email: "ashoka.mun@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka Marketing Club", Email: "marketingclub@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka University International Students Association (AUISA)", Email: "newsletter@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka University International Students Association (AUISA)", Email: "no-reply@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka University International Students Association (AUISA)", Email: "systems@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka University Queer Collective (AUQC )", Email: "newsletter@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka University Queer Collective (AUQC )", Email: "no-reply@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka University Queer Collective (AUQC )", Email: "systems@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka University Society for Sustainable Development Goals", Email: "newsletter@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka University Society for Sustainable Development Goals", Email: "no-reply@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka University Society for Sustainable Development Goals", Email: "systems@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka Women in Business and Leadership", Email: "awibnl@ashoka.edu.in", Type: "Club" },
+    { Name: "Caperture: The Photography Society", Email: "caperture@ashoka.edu.in", Type: "Club" },
+    { Name: "Cycling Club", Email: "ashokacyclingclub@ashoka.edu.in", Type: "Club" },
+    { Name: "Her Campus Ashoka", Email: "hcashoka@ashoka.edu.in", Type: "Club" },
+    { Name: "Navrang", Email: "filmsoc@ashoka.edu.in", Type: "Club" },
+    { Name: "Neev: The Community Engagement Club", Email: "neev@ashoka.edu.in", Type: "Club" },
+    { Name: "Orators' Club", Email: "orators@ashoka.edu.in", Type: "Club" },
+    { Name: "Red Brick Words", Email: "poetry@ashoka.edu.in", Type: "Club" },
+    { Name: "Rotaract Club", Email: "rotaract@ashoka.edu.in", Type: "Club" },
+    { Name: "Ruhi", Email: "ruhi@ashoka.edu.in", Type: "Club" },
+    { Name: "Sports Enthusiast Club", Email: "sec@ashoka.edu.in", Type: "Club" },
+    { Name: "The Comic Relief", Email: "thecomicrelief@ashoka.edu.in", Type: "Club" },
+    { Name: "The Feminist Collective", Email: "feministcollective@ashoka.edu.in", Type: "Club" },
+    { Name: "The Green Room", Email: "theatresociety@ashoka.edu.in", Type: "Club" },
+    { Name: "The Northeast Collective", Email: "northeastcollective@ashoka.edu.in", Type: "Club" },
+    { Name: "Vistaar", Email: "vistaar@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka Tech Consulting Club", Email: "consulting@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka Fintech Club", Email: "ashoka.mun@ashoka.edu.in", Type: "Club" },
+    { Name: "Ashoka Data Society (ADS) ", Email: "ads@ashoka.edu.in", Type: "Society" },
+    { Name: "Epigraph: The Literary society", Email: "litsoc@ashoka.edu.in", Type: "Society" },
+    { Name: "PhySoc", Email: "philsoc@ashoka.edu.in", Type: "Society" },
+    { Name: "Philosophy Society", Email: "philsoc@ashoka.edu.in", Type: "Society" },
+    { Name: "Psychology Society ", Email: "psychology.society@ashoka.edu.in", Type: "Society" },
+    { Name: "Ashoka University Economics Society", Email: "econsoc@ashoka.edu.in", Type: "Society" },
+    { Name: "Ashoka Society for India Studies", Email: "asis@ashoka.edu.in", Type: "Society" },
+    { Name: "Women in Computing Society (WiCS)", Email: "wics@ashoka.edu.in", Type: "Society" },
+    { Name: "Ashoka Political Science Society ", Email: "polsoc@ashoka.edu.in", Type: "Society" },
+    { Name: "The Computer Science Society (CS Soc)", Email: "cs.society@ashoka.edu.in", Type: "Society" },
+    { Name: "Ashoka Public Policy Society (APPS)", Email: "publicpolsoc@ashoka.edu.in", Type: "Society" },
+    { Name: "IEEE Ashoka Student Branch", Email: "ieee.asb@ashoka.edu.in", Type: "Society" },
+    { Name: "War Studies Society ", Email: "warsoc@ashoka.edu.in", Type: "Society" },
+    { Name: "Astronomy Society", Email: "astronomysociety@ashoka.edu.in", Type: "Society" },
+    { Name: "Ashoka Law Society ", Email: "law@ashoka.edu.in", Type: "Society" },
+    { Name: "AMFACS", Email: "amfacs@ashoka.edu.in", Type: "Society" },
+    { Name: "Mathematics Society", Email: "math.society@ashoka.edu.in", Type: "Society" },
+    { Name: "Biology Society ", Email: "biosoc@ashoka.edu.in", Type: "Society" },
+    { Name: "Ashoka Society for International Trade and Foreign Policy (ASITFP)", Email: "asitfp@ashoka.edu.in", Type: "Society" },
+    { Name: "Ashoka Women In Finance Society", Email: "womeninfinance@ashoka.edu.in", Type: "Society" },
+    { Name: "The Ashoka Journal of Biosciences", Email: "biojournal@ashoka.edu.in", Type: "Society" },
+    { Name: "Ashoka Climate Change and Environmental Studies Society (ACCESS)", Email: "evs.soc@ashoka.edu.in", Type: "Society" },
+    { Name: "Chemistry Society", Email: "chemsoc@ashoka.edu.in", Type: "Society" },
+    { Name: "Untitled: The Visual Arts Society", Email: "untitled.visualarts@ashoka.edu.in", Type: "Society" },
+    { Name: "Physics", Email: "physics.dept@ashoka.edu.in", Type: "Department" },
+    { Name: "Chemistry", Email: "chem.rep@ashoka.edu.in", Type: "Department" },
+    { Name: "Biology", Email: "biology@ashoka.edu.in", Type: "Department" },
+    { Name: "History", Email: "historyrepresentatives@ashoka.edu.in", Type: "Department" },
+    { Name: "IR", Email: "ir.rep@ashoka.edu.in", Type: "Department" },
+    { Name: "Entrepreneurship", Email: "eclub@ashoka.edu.in", Type: "Department" },
+    { Name: "English", Email: "englishandcreativewriting@ashoka.edu.in", Type: "Department" },
+    { Name: "Media Studies", Email: "media.studies@ashoka.edu.in", Type: "Department" },
+    { Name: "CW", Email: "creativewriting.rep@ashoka.edu.in", Type: "Department" },
+    { Name: "Economics", Email: "econsoc@ashoka.edu.in", Type: "Department" },
+    { Name: "Computer Science", Email: "cs.society@ashoka.edu.in", Type: "Department" },
+    { Name: "Philosophy", Email: "philsoc@ashoka.edu.in", Type: "Department" },
+    { Name: "PPE", Email: "ppe.rep@ashoka.edu.in", Type: "Department" },
+    { Name: "Mathematics", Email: "math.society@ashoka.edu.in", Type: "Department" },
+    { Name: "Psychology", Email: "psychology.society@ashoka.edu.in", Type: "Department" },
+    { Name: "EVS", Email: "evs.rep@ashoka.edu.in", Type: "Department" },
+    { Name: "China Studies", Email: "chinastudies@ashoka.edu.in", Type: "Department" },
+    { Name: "Visual Arts", Email: "untitled.visualarts@ashoka.edu.in", Type: "Department" },
+    { Name: "Physics", Email: "physics.dept@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "Chemistry", Email: "chem.rep@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "Biology", Email: "biology@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "History", Email: "historyrepresentatives@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "IR", Email: "ir.rep@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "Entrepreneurship", Email: "eclub@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "English", Email: "englishandcreativewriting@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "Media Studies", Email: "media.studies@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "CW", Email: "creativewriting.rep@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "Economics", Email: "econsoc@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "Computer Science", Email: "cs.society@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "Philosophy", Email: "philsoc@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "PPE", Email: "ppe.rep@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "Mathematics", Email: "math.society@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "Psychology", Email: "psychology.society@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "EVS", Email: "evs.rep@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "China Studies", Email: "chinastudies@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "Visual Arts", Email: "untitled.visualarts@ashoka.edu.in", Type: "Department Representatives" },
+    { Name: "Centre for Studies in Gender and Sexuality", Email: "csgs@ashoka.edu.in", Type: "Centres" },
+    { Name: "Center for Entrepreneurship", Email: "eclub@ashoka.edu.in", Type: "Centres" },
+    { Name: "Office of Post Graduate Studies", Email: "connect.postgraduate@ashoka.edu.in", Type: "Offices" },
+    { Name: "Office of Learning Support", Email: "ols@ashoka.edu.in", Type: "Offices" },
+    { Name: "Career Development Office", Email: "cdo@ashoka.edu.in", Type: "Offices" },
+    { Name: "Dining Ashoka", Email: "dining@ashoka.edu.in", Type: "Offices" },
+    { Name: "IT Helpdesk", Email: "philhelpdesk@ashoka.edu.in", Type: "Offices" },
+    { Name: "Cultural Ministry", Email: "culturalministry@ashoka.edu.in", Type: "Student Government" },
+    { Name: "Ministry of Technology", Email: "technology.ministry@ashoka.edu.in", Type: "Student Government" },
+    { Name: "Ministry of Community & Well Being", Email: "well.being@ashoka.edu.in", Type: "Student Government" },
+    { Name: "Ministry of Academic Affairs", Email: "academicaffairs.ministry@ashoka.edu.in", Type: "Student Government" },
+    { Name: "Sports Ministry", Email: "sports.ministry@ashoka.edu.in", Type: "Student Government" },
+    { Name: "Campus Life Ministry", Email: "campus.life@ashoka.edu.in", Type: "Student Government" },
+    { Name: "Environment Ministry", Email: "environmentministry@ashoka.edu.in", Type: "Student Government" },
+    { Name: "Student Government", Email: "sg@ashoka.edu.in", Type: "Student Government" }
+            // More data can be added here
+        ];
+
+        let selectedEmailsLabels = [];
+        let selectedEmailsSocials = [];
+
+        // Populate dropdown with all options initially
+        function populateDropdown(emails, category) {
+            const dropdownContent = document.getElementById(category === 'Label' ? 'dropdownContentLabels' : 'dropdownContentSocials');
+            dropdownContent.innerHTML = '';  // Clear previous results
+
+            emails.forEach((item) => {
+                const a = document.createElement('a');
+                a.className = 'dropdown-item';
+                a.innerHTML = `${item.Name} (${item.Email})`;
+                a.onclick = () => selectEmail(item, category);
+                dropdownContent.appendChild(a);
+            });
+        }
+
+        // Filter emails based on the search bar input
+        function filterEmails(category) {
+            const query = document.getElementById(category === 'Label' ? 'searchBarLabels' : 'searchBarSocials').value.toLowerCase();
+            const filteredEmails = emailData.filter(item => 
+                item.Name.toLowerCase().includes(query) || 
+                item.Email.toLowerCase().includes(query)
+            );
+            populateDropdown(filteredEmails, category);
+        }
+
+        // Open the dropdown menu
+        function openDropdown(category) {
+            const dropdownMenu = document.getElementById(category === 'Label' ? 'dropdownMenuLabels' : 'dropdownMenuSocials');
+            closeDropdown();  // Close any open dropdown before opening the new one
+            dropdownMenu.classList.add('is-active');
+            filterEmails(category);
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.dropdown') && !event.target.closest('.input')) {
+                closeDropdown();
+            }
+        });
+
+        // Close all dropdown menus
+        function closeDropdown() {
+            document.getElementById('dropdownMenuLabels').classList.remove('is-active');
+            document.getElementById('dropdownMenuSocials').classList.remove('is-active');
+        }
+
+        // Add selected email to the list
+        function selectEmail(item, category) {
+            if (category === 'Label') {
+                if (!selectedEmailsLabels.includes(item)) {
+                    selectedEmailsLabels.push(item);
+                    updateSelectedItems('Label');
+                }
+            } else {
+                if (!selectedEmailsSocials.includes(item)) {
+                    selectedEmailsSocials.push(item);
+                    updateSelectedItems('Social');
+                }
+            }
+            closeDropdown();
+        }
+
+        // Update the selected items display
+        function updateSelectedItems(category) {
+            const selectedItemsDiv = document.getElementById(category === 'Label' ? 'selectedItemsLabels' : 'selectedItemsSocials');
+            selectedItemsDiv.innerHTML = '';
+
+            const selectedEmails = category === 'Label' ? selectedEmailsLabels : selectedEmailsSocials;
+
+            selectedEmails.forEach((item, index) => {
+                const tag = document.createElement('span');
+                tag.className = 'tag is-primary mr-2 mb-2';
+                tag.innerHTML = `${item.Name} (${item.Email}) <button class="delete" onclick="removeSelected(${index}, '${category}')"></button>`;
+                selectedItemsDiv.appendChild(tag);
+            });
+        }
+
+        // Remove a selected email
+        function removeSelected(index, category) {
+            if (category === 'Label') {
+                selectedEmailsLabels.splice(index, 1);
+                updateSelectedItems('Label');
+            } else {
+                selectedEmailsSocials.splice(index, 1);
+                updateSelectedItems('Social');
+            }
+        }
+
+        // Generate XML file
+        function generateXML() {
+            if (selectedEmailsLabels.length === 0 && selectedEmailsSocials.length === 0) {
+                alert('Please select at least one email.');
+                return;
+            }
+
+            const xmlHeader = `<?xml version="1.0" encoding="UTF-8"?>\n<feed xmlns="http://www.w3.org/2005/Atom" xmlns:apps="http://schemas.google.com/apps/2006">\n`;
+            const authorInfo = `<author>\n<name>Ibrahim Khalil</name>\n<email>ibrahim.khalil_ug25@ashoka.edu.in</email>\n</author>\n`;
+            const updatedDate = `<updated>${new Date().toISOString()}</updated>\n`;
+            let entries = '';
+
+            // Collect selected emails and group by type
+            const emailsByTypeLabels = selectedEmailsLabels.reduce((acc, item) => {
+                if (!acc[item.Type]) {
+                    acc[item.Type] = [];
+                }
+                acc[item.Type].push(item.Email);
+                return acc;
+            }, {});
+
+            const emailsByTypeSocials = selectedEmailsSocials.reduce((acc, item) => {
+                if (!acc[item.Type]) {
+                    acc[item.Type] = [];
+                }
+                acc[item.Type].push(item.Email);
+                return acc;
+            }, {});
+
+            for (const [type, emails] of Object.entries(emailsByTypeLabels)) {
+                const emailList = emails.join(' OR ');
+                entries += `<entry>\n<category term="filter"></category>\n<title>Mail Filter for ${type}</title>\n`;
+                entries += `<updated>${new Date().toISOString()}</updated>\n<apps:property name="from" value="${emailList}"/>\n`;
+                entries += `<apps:property name="label" value="${type}"/>\n</entry>\n`;
+            }
+
+            for (const [type, emails] of Object.entries(emailsByTypeSocials)) {
+                const emailList = emails.join(' OR ');
+                entries += `<entry>\n<category term="filter"></category>\n<title>Mail Filter for ${type}</title>\n`;
+                entries += `<updated>${new Date().toISOString()}</updated>\n<apps:property name="from" value="${emailList}"/>\n`;
+                entries += `<apps:property name="label" value="${type}"/>\n</entry>\n`;
+            }
+
+            // Handle Google Classroom checkbox
+            if (document.getElementById('googleClassroomCheckbox').checked) {
+                entries += `<entry>\n<category term="filter"></category>\n<title>Google Classroom</title>\n`;
+                entries += `<apps:property name="from" value="no-reply@classroom.google.com"/>\n`;
+                entries += `<apps:property name='shouldArchive' value='true'/>\n`;
+                entries += `<apps:property name="label" value="Google Classroom"/>\n</entry>\n`;
+            }
+
+            // Handle Shared Files checkbox
+            if (document.getElementById('sharedFilesCheckbox').checked) {
+                entries += `<entry>\n<category term="filter"></category>\n<title>Shared Files</title>\n`;
+                entries += `<apps:property name="from" value="drive-shares-dm-noreply@google.com"/>\n`;
+                entries += `<apps:property name='shouldArchive' value='true'/>\n`;
+                entries += `<apps:property name="label" value="Shared Files"/>\n</entry>\n`;
+            }
+
+            const xmlFooter = `</feed>`;
+            const xmlContent = xmlHeader + updatedDate + authorInfo + entries + xmlFooter;
+
+            // Create and download the XML file
+            const blob = new Blob([xmlContent], { type: 'application/xml' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'gmail-filters.xml';
+            link.click();
+        }
+
+        // Initialize the dropdown with all emails on page load
+        populateDropdown(emailData, 'Label');
+        populateDropdown(emailData, 'Social');
+    </script>
+</body>
+</html>
