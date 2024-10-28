@@ -125,7 +125,12 @@
     const selectedClubsList = document.getElementById('selectedClubs');
     const selectedSocietiesList = document.getElementById('selectedSocieties');
     const clubsChecked = document.getElementById('clubsCheckbox');
-    
+    const socsChecked = document.getElementById('societiesCheckbox');
+    const gcChecked = document.getElementById('googleClassroomCheckbox');
+    const sfChecked = document.getElementById('sharedFilesCheckbox');
+    const deptsChecked = document.getElementById('departmentsCheckbox');
+    const officesChecked = document.getElementById('officesCheckbox');
+
     let emailData = []; // Store JSON data here
 
     // Load JSON data
@@ -310,6 +315,30 @@
             .join(' , ');
 
           xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='${clubEmails}'/><apps:property name='label' value='Clubs'/></entry>\n`;
+      }
+      if (socsChecked.checked) {
+        // Map the filtered emails, join them with commas, and add to xmlContent
+          const socsEmails = emailData
+            .filter(item => item.Type === 'Society')
+            .map(item => item.Email)
+            .join(' , ');
+
+          xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='${socsEmails}'/><apps:property name='label' value='Socities'/></entry>\n`;
+      }
+      if (deptsChecked.checked) {
+        // Map the filtered emails, join them with commas, and add to xmlContent
+          const deptsEmails = emailData
+            .filter(item => item.Type === 'Department')
+            .map(item => item.Email)
+            .join(' , ');
+
+          xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='${deptsEmails}'/><apps:property name='label' value='Departments'/></entry>\n`;
+      }
+      if (gcChecked.checked) {
+          xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='no-reply@classroom.google.com'/><apps:property name='label' value='Google Classroom'/></entry>\n`;
+      }
+      if (sfChecked.checked) {
+          xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='drive-shares-dm-noreply@google.com'/><apps:property name='label' value='Shared Files'/></entry>\n`;
       }
 
       xmlContent += `</feed>`;
