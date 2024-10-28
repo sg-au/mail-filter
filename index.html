@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Keyword Input and XML Generator</title>
+  <title>Email Filter</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -11,30 +11,65 @@
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      height: 100vh;
-      margin: 0;
+      padding: 20px;
       background-color: #f4f4f9;
+      color: #333;
+    }
+    h2, h3 {
+      margin-bottom: 15px;
+      font-size: 28px;
+      color: #333;
     }
     input[type="text"] {
-      padding: 10px;
-      font-size: 16px;
-      margin-bottom: 10px;
+      padding: 12px;
+      font-size: 18px;
+      margin-bottom: 15px;
+      width: 350px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
     }
-    #wordsList {
-      margin-top: 20px;
+    .selected-list, .dropdown-list {
+      margin-top: 10px;
+      font-size: 18px;
+      width: 350px;
     }
-    .word {
-      padding: 5px;
-      font-size: 16px;
+    .dropdown-list {
+      max-height: 250px;
+      overflow-y: auto;
+      position: absolute;
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      display: none;
+      z-index: 1;
+    }
+    .dropdown-item {
+      padding: 12px;
+      cursor: pointer;
       color: #333;
+    }
+    .dropdown-item:hover {
+      background-color: #f1f1f1;
+    }
+    .selected-item {
+      background-color: #e9e9e9;
+      border-radius: 4px;
+      padding: 8px;
+      margin: 5px 0;
+    }
+    label {
+      font-size: 20px;
+      display: block;
+      margin-top: 15px;
     }
     #downloadBtn {
       margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 16px;
+      padding: 15px 25px;
+      font-size: 20px;
       background-color: #4CAF50;
       color: white;
       border: none;
+      border-radius: 4px;
       cursor: pointer;
     }
   </style>
@@ -43,30 +78,65 @@
 
   <h2>Enter Keywords</h2>
   <input type="text" id="keywordInput" placeholder="Type a keyword and press Enter">
-  <div id="wordsList"></div>
+  <div id="wordsList" class="selected-list"></div>
 
-  <h2>Enter Email id's</h2>
-  <input type="text" id="emailInput" placeholder="Type an email id and press Enter">
-  <div id="emailList"></div>
+  <h2>Enter Email IDs</h2>
+  <input type="text" id="emailInput" placeholder="Search by name or email">
+  <div id="emailList" class="dropdown-list"></div>
+  <div id="selectedEmails" class="selected-list"></div>
+
+  <h3>Options</h3>
+  <label><input type="checkbox" id="skipPrimaryInbox"> Skip Primary Inbox</label>
+  <label><input type="checkbox" id="clubsCheckbox"> Clubs</label>
+  <div id="clubsDropdown" class="dropdown-list"></div>
+  <div id="selectedClubs" class="selected-list"></div>
+  
+  <label><input type="checkbox" id="societiesCheckbox"> Societies</label>
+  <div id="societiesDropdown" class="dropdown-list"></div>
+  <div id="selectedSocieties" class="selected-list"></div>
+
+  <label><input type="checkbox" id="googleClassroomCheckbox"> Google Classroom</label>
+  <label><input type="checkbox" id="sharedFilesCheckbox"> Shared Files</label>
+  <label><input type="checkbox" id="departmentsCheckbox"> Departments</label>
+  <label><input type="checkbox" id="officesCheckbox"> Offices</label>
+
   <button id="downloadBtn">Download XML</button>
 
   <script>
     const words = [];
+    const emails = [];
+    const selectedClubs = [];
+    const selectedSocieties = [];
     const keywordInput = document.getElementById('keywordInput');
     const wordsList = document.getElementById('wordsList');
-    const downloadBtn = document.getElementById('downloadBtn');
-
-    const emails = [];
     const emailInput = document.getElementById('emailInput');
     const emailList = document.getElementById('emailList');
+    const selectedEmails = document.getElementById('selectedEmails');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const clubsCheckbox = document.getElementById('clubsCheckbox');
+    const societiesCheckbox = document.getElementById('societiesCheckbox');
+    const clubsDropdown = document.getElementById('clubsDropdown');
+    const societiesDropdown = document.getElementById('societiesDropdown');
+    const selectedClubsList = document.getElementById('selectedClubs');
+    const selectedSocietiesList = document.getElementById('selectedSocieties');
 
+    let emailData = []; // Store JSON data here
+
+    // Load JSON data
+    fetch('emails.json')
+      .then(response => response.json())
+      .then(data => {
+        emailData = data;
+      });
+
+    // Add keywords
     keywordInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter' && keywordInput.value.trim()) {
         const word = keywordInput.value.trim();
         words.push(word);
         
         const wordElement = document.createElement('div');
-        wordElement.className = 'word';
+        wordElement.className = 'selected-item';
         wordElement.textContent = word;
         wordsList.appendChild(wordElement);
         
@@ -74,89 +144,174 @@
       }
     });
 
-    emailInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter' && emailInput.value.trim()) {
-        const email = emailInput.value.trim();
-        emails.push(email);
-        
+    // Display and select emails
+    emailInput.addEventListener('input', () => {
+      const query = emailInput.value.toLowerCase();
+      emailList.innerHTML = '';
+      emailList.style.display = query ? 'block' : 'none';
+
+      emailData
+        .filter(item => item.Name_df.toLowerCase().includes(query) || item.Email.toLowerCase().includes(query))
+        .forEach(item => {
+          const emailElement = document.createElement('div');
+          emailElement.className = 'dropdown-item';
+          emailElement.textContent = `${item.Name_df} (${item.Email})`;
+          emailElement.addEventListener('click', () => {
+            if (!emails.includes(item.Email)) {
+              emails.push(item.Email);
+              emailInput.value = '';
+              displaySelectedEmails();
+              emailList.style.display = 'none';
+            }
+          });
+          emailList.appendChild(emailElement);
+        });
+    });
+
+    function displaySelectedEmails() {
+      selectedEmails.innerHTML = '';  
+      emails.forEach(email => {
         const emailElement = document.createElement('div');
-        emailElement.className = 'email';
+        emailElement.className = 'selected-item';
         emailElement.textContent = email;
-        emailList.appendChild(emailElement);
-        
-        emailInput.value = '';
+        selectedEmails.appendChild(emailElement);
+      });
+    }
+
+    // Toggle Clubs dropdown
+    clubsCheckbox.addEventListener('change', () => {
+      clubsDropdown.style.display = clubsCheckbox.checked ? 'block' : 'none';
+    });
+
+    // Toggle Societies dropdown
+    societiesCheckbox.addEventListener('change', () => {
+      societiesDropdown.style.display = societiesCheckbox.checked ? 'block' : 'none';
+    });
+
+    // Search and select clubs
+    clubsDropdown.addEventListener('input', () => {
+      clubsDropdown.innerHTML = '';
+      clubsDropdown.style.display = 'block';
+
+      emailData
+        .filter(item => item.Type === 'Club')
+        .forEach(item => {
+          const clubElement = document.createElement('div');
+          clubElement.className = 'dropdown-item';
+          clubElement.textContent = item.Name_df;
+          clubElement.addEventListener('click', () => {
+            if (!selectedClubs.includes(item.Name_df)) {
+              selectedClubs.push(item.Name_df);
+              displaySelectedClubs();
+              clubsDropdown.style.display = 'none';
+            }
+          });
+          clubsDropdown.appendChild(clubElement);
+        });
+    });
+
+    // Display selected clubs
+    function displaySelectedClubs() {
+      selectedClubsList.innerHTML = '';
+      selectedClubs.forEach(club => {
+        const clubElement = document.createElement('div');
+        clubElement.className = 'selected-item';
+        clubElement.textContent = club;
+        selectedClubsList.appendChild(clubElement);
+      });
+    }
+
+    // Search and select societies
+    societiesDropdown.addEventListener('input', () => {
+      societiesDropdown.innerHTML = '';
+      societiesDropdown.style.display = 'block';
+
+      emailData
+        .filter(item => item.Type === 'Society')
+        .forEach(item => {
+          const societyElement = document.createElement('div');
+          societyElement.className = 'dropdown-item';
+          societyElement.textContent = item.Name_df;
+          societyElement.addEventListener('click', () => {
+            if (!selectedSocieties.includes(item.Name_df)) {
+              selectedSocieties.push(item.Name_df);
+              displaySelectedSocieties();
+              societiesDropdown.style.display = 'none';
+            }
+          });
+          societiesDropdown.appendChild(societyElement);
+        });
+    });
+
+    // Display selected societies
+    function displaySelectedSocieties() {
+      selectedSocietiesList.innerHTML = '';
+      selectedSocieties.forEach(society => {
+        const societyElement = document.createElement('div');
+        societyElement.className = 'selected-item';
+        societyElement.textContent = society;
+        selectedSocietiesList.appendChild(societyElement);
+      });
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (event) => {
+      if (!emailInput.contains(event.target) && !emailList.contains(event.target)) {
+        emailList.style.display = 'none';
+      }
+      if (!clubsDropdown.contains(event.target) && !clubsCheckbox.contains(event.target)) {
+        clubsDropdown.style.display = 'none';
+      }
+      if (!societiesDropdown.contains(event.target) && !societiesCheckbox.contains(event.target)) {
+        societiesDropdown.style.display = 'none';
       }
     });
 
+    // XML generation function
     function createXML() {
-      //STRUCTURE OF XML CONTENT
       let xmlContent = `<?xml version='1.0' encoding='UTF-8'?>\n
-         <feed xmlns='http://www.w3.org/2005/Atom' xmlns:apps='http://schemas.google.com/apps/2006'>\n
-         <title>Mail Filters</title>\n
-         <id>tag:mail.google.com,2008:filters:z0000001730008653632*4365085081838130124,z0000001730008668966*8357290940934081963,z0000001730008710555*5123080779061590725,z0000001730008781702*3387327660921036404</id>\n
-         <updated>2024-10-27T05:59:53Z</updated>
-         <author>\n
-         <name>Vaani Goenka</name>\n
-         <email>vaani.goenka_ug2024@ashoka.edu.in</email>
-         </author>\n`;
+        <feed xmlns='http://www.w3.org/2005/Atom' xmlns:apps='http://schemas.google.com/apps/2006'>\n
+        <title>Mail Filters</title>\n
+        <updated>${new Date().toISOString()}</updated>\n
+        <author>\n
+          <name>Ibrahim Khalil</name>\n
+          <email>ibrahim.khalil_ug25@ashoka.edu.in</email>
+        </author>\n`;
 
-          //EMAILS CONTAINNG KEYWORDS 
-      words.forEach((word, index) => {
-        xmlContent += `  <entry>\n
-             <category term='filter'></category>\n
-             <title>Mail Filter</title>\n
-             <id>tag:mail.google.com,2008:filter:z0000001730008710555*5123080779061590725_${index}</id>\n
-             <updated>2024-10-27T05:59:53Z</updated>\n
-             <content></content>\n
-             <apps:property name='hasTheWord' value='${word}'/>\n
-             <apps:property name='label' value='Keywords'/>\n
-             <apps:property name='sizeOperator' value='s_sl'/>\n
-              <apps:property name='sizeUnit' value='s_smb'/>\n
-              </entry>\n`;
+      // Add keyword-based filters
+      words.forEach(word => {
+        xmlContent += `<entry><category term='filter'></category><apps:property name='hasTheWord' value='${word}'/><apps:property name='label' value='Keywords'/></entry>\n`;
       });
-       
-         //PRIORITY EMAILS
-      xmlContent += ` <entry>
-              <category term='filter'></category>
-              <title>Mail Filter</title>
-              <id>tag:mail.google.com,2008:filter:z0000001730008668966*8357290940934081963</id>
-              <updated>2024-10-27T05:59:53Z</updated>
-              <content></content>
-              <apps:property name='from' value='${emails.join(", ")}'/> 
-              <apps:property name='label' value='Priority'/>
-              <apps:property name='sizeOperator' value='s_sl'/>
-              <apps:property name='sizeUnit' value='s_smb'/>
-              </entry>`;
-      
-        /*
-        THINGS LEFT: 
-        1. MAKE DE-SELECTED EMAILS SKIP THE PRIMARY INOBX
-        2. LABEL FOR CLUBS AND SOCS 
-        3. SUB-LABELS FOR CLUBS AND SOCS
-        4. LABEL FOR GOOGLE CLASSROOM
-        5. LABEL FOR SHARED FILES
-        6. LABEL FOR DEPARTMENTS
-        7. LABEL FOR OFFICES
-        */
-        
-        xmlContent +=     `</feed>`;
 
-      
+      // Add email-based filters
+      if (emails.length > 0) {
+        xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='${emails.join(", ")}'/><apps:property name='label' value='Priority'/></entry>\n`;
+      }
+
+      // Add filters for selected clubs and societies
+      selectedClubs.forEach(club => {
+        xmlContent += `<entry><category term='filter'></category><apps:property name='label' value='${club}'/></entry>\n`;
+      });
+      selectedSocieties.forEach(society => {
+        xmlContent += `<entry><category term='filter'></category><apps:property name='label' value='${society}'/></entry>\n`;
+      });
+
+      xmlContent += `</feed>`;
       return xmlContent;
     }
 
+    // Download XML file
     function downloadXML() {
       const xmlContent = createXML();
       const blob = new Blob([xmlContent], { type: 'application/xml' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = 'mail_filters.xml';
-      document.body.appendChild(link);
+      link.download = 'gmail-filters.xml';
       link.click();
-      document.body.removeChild(link);
     }
 
     downloadBtn.addEventListener('click', downloadXML);
   </script>
+
 </body>
 </html>
