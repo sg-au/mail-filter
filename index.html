@@ -87,7 +87,9 @@
 
   <h3>Options</h3>
   <label><input type="checkbox" id="skipPrimaryInbox"> Skip Primary Inbox</label>
-  <label><input type="checkbox" id="clubsCheckbox"> Clubs</label>
+
+<h2>Select the labels you want to see in your inbox</h2>
+<label><input type="checkbox" id="clubsCheckbox"> Clubs</label>
   <div id="clubsDropdown" class="dropdown-list"></div>
   <div id="selectedClubs" class="selected-list"></div>
   
@@ -119,6 +121,12 @@
     const societiesDropdown = document.getElementById('societiesDropdown');
     const selectedClubsList = document.getElementById('selectedClubs');
     const selectedSocietiesList = document.getElementById('selectedSocieties');
+    const clubsChecked = document.getElementById('clubsCheckbox');
+    const socsChecked = document.getElementById('socitiesCheckbox');
+    const gcChecked = document.getElementById('googleClassroomCheckbox');
+    const sfChecked = document.getElementById('sharedFilesCheckbox');
+    const officesChecked = document.getElementById('officesCheckbox');
+    const deptsChecked = document.getElementById('departmentsCheckbox');
 
     let emailData = []; // Store JSON data here
 
@@ -269,6 +277,7 @@
 
     // XML generation function
     function createXML() {
+      //basic top structure of XML file
       let xmlContent = `<?xml version='1.0' encoding='UTF-8'?>\n
         <feed xmlns='http://www.w3.org/2005/Atom' xmlns:apps='http://schemas.google.com/apps/2006'>\n
         <title>Mail Filters</title>\n
@@ -288,6 +297,31 @@
         xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='${emails.join(", ")}'/><apps:property name='label' value='Priority'/></entry>\n`;
       }
 
+      if (clubsChecked.checked) {
+        xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='`;
+        emailData
+        .filter(item => item.Type === 'Club')
+        .forEach(item => {
+          xmlContent += `${item.Email},`;
+        });
+        xmlContent += `'/><apps:property name='label' value='Clubs'/></entry>\n`;
+      }
+      if (socsChecked.checked) {
+        
+      }
+      if (gcChecked.checked) {
+        
+      }
+      if (sfChecked.checked) {
+        
+      }
+      if (deptsChecked.checked) {
+        
+      }
+      if (officesChecked.checked) {
+        
+      }
+      
       // Add filters for selected clubs and societies
       selectedClubs.forEach(club => {
         xmlContent += `<entry><category term='filter'></category><apps:property name='label' value='${club}'/></entry>\n`;
