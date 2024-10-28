@@ -124,7 +124,8 @@
     const societiesDropdown = document.getElementById('societiesDropdown');
     const selectedClubsList = document.getElementById('selectedClubs');
     const selectedSocietiesList = document.getElementById('selectedSocieties');
-
+    const clubsChecked = document.getElementById('clubsCheckbox');
+    
     let emailData = []; // Store JSON data here
 
     // Load JSON data
@@ -300,6 +301,16 @@
       selectedSocieties.forEach(society => {
         xmlContent += `<entry><category term='filter'></category><apps:property name='label' value='${society}'/></entry>\n`;
       });
+
+      if (clubsChecked.checked) {
+        // Map the filtered emails, join them with commas, and add to xmlContent
+          const clubEmails = emailData
+            .filter(item => item.Type === 'Club')
+            .map(item => item.Email)
+            .join(' , ');
+
+          xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='${clubEmails}'/><apps:property name='label' value='Clubs'/></entry>\n`;
+      }
 
       xmlContent += `</feed>`;
       return xmlContent;
