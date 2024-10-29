@@ -33,7 +33,7 @@
       border: 1px solid #ddd;
       position: absolute;
       display: none;
-      width: calc(100% - 20px);
+      width: 100%; /* Make width consistent with the input box */
       z-index: 10;
     }
     .dropdown-item {
@@ -258,9 +258,9 @@
       });
 
       // Add selected email IDs to "Priority" label
-      if (emails.length > 0) {
-        xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='${emails.join(", ")}'/><apps:property name='label' value='Priority'/></entry>\n`;
-      }
+      emails.forEach(email => {
+        xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='${email}'/><apps:property name='label' value='Priority'/></entry>\n`;
+      });
 
       // Add selected skip inbox emails with archive option
       selectedSkipInboxEmails.forEach(email => {
@@ -275,7 +275,7 @@
         xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='drive-shares-dm-noreply@google.com'/><apps:property name='label' value='Shared Drives'/></entry>\n`;
       }
 
-      // Grouped labels for Clubs, Societies, Departments, Offices based on checkbox selections
+      // Individual entries for Clubs, Societies, Departments, Offices based on checkbox selections
       const categories = [
         { checkbox: clubsCheckbox, type: 'Club', label: 'Clubs' },
         { checkbox: societiesCheckbox, type: 'Society', label: 'Societies' },
@@ -285,14 +285,12 @@
 
       categories.forEach(category => {
         if (category.checkbox.checked) {
-          const categoryEmails = emailData
-            .filter(item => item.Type && item.Type.trim() === category.type)
-            .map(item => item.Email)
-            .join(', ');
+          const categoryEmails = emailData.filter(item => item.Type && item.Type.trim() === category.type).map(item => item.Email);
 
-          if (categoryEmails) {
-            xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='${categoryEmails}'/><apps:property name='label' value='${category.label}'/></entry>\n`;
-          }
+          // Create individual XML entries for each email
+          categoryEmails.forEach(email => {
+            xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='${email}'/><apps:property name='label' value='${category.label}'/></entry>\n`;
+          });
         }
       });
 
