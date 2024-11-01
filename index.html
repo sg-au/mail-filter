@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Filter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+    h2, h3 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    input[type="text"], .selected-list {
+      padding: 8px;
+      font-size: 16px;
+      width: 100%;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .dropdown-list {
+      max-height: 200px;
+      overflow-y: auto;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      position: absolute;
+      display: none;
+      width: 100%; /* Make width consistent with the input box */
+      z-index: 10;
+    }
+    .dropdown-item {
+      padding: 8px;
+      cursor: pointer;
+    }
+    .dropdown-item:hover {
+      background-color: #e0e0e0;
+    }
+    .selected-item {
+      background-color: #e9e9e9;
+      border-radius: 4px;
+      margin: 2px 0;
+      padding: 5px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #888;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .remove-btn:hover {
+      color: #f44336;
+    }
+    .checkbox-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    #skipInboxBtn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    #skipInboxBtn:hover {
+      background-color: #0056b3;
+    }
+    #downloadBtn {
+      margin-top: 20px;
+      padding: 12px;
+      width: 100%;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Keywords</h2>
+  <input type="text" id="keywordInput" placeholder="Type a keyword and press Enter">
+  <div id="wordsList" class="selected-list"></div>
+
+  <h2>Email IDs</h2>
+  <input type="text" id="emailInput" placeholder="Search by name or email">
+  <div id="emailList" class="dropdown-list"></div>
+  <div id="selectedEmails" class="selected-list"></div>
+
+  <h2>Skip Primary Inbox</h2>
+  <button id="skipInboxBtn">Select Emails to Skip</button>
+  <div id="skipInboxPopup" class="dropdown-list"></div>
+  <div id="selectedSkipInboxEmails" class="selected-list"></div>
+
+  <h3>Options</h3>
+  <div class="checkbox-container">
+    <label><input type="checkbox" id="clubsCheckbox"> Clubs</label>
+    <label><input type="checkbox" id="societiesCheckbox"> Societies</label>
+    <label><input type="checkbox" id="departmentsCheckbox"> Departments</label>
+    <label><input type="checkbox" id="officesCheckbox"> Offices</label>
+    <label><input type="checkbox" id="googleClassroomCheckbox"> Google Classroom</label>
+    <label><input type="checkbox" id="sharedFilesCheckbox"> Shared Files</label>
+  </div>
+
+  <button id="downloadBtn">Download XML</button>
+
+  <script>
+    const words = [];
+    const emails = [];
+    const selectedSkipInboxEmails = [];
+    let emailData = [];
+
+    const keywordInput = document.getElementById('keywordInput');
+    const wordsList = document.getElementById('wordsList');
+    const emailInput = document.getElementById('emailInput');
+    const emailList = document.getElementById('emailList');
+    const selectedEmails = document.getElementById('selectedEmails');
+    const skipInboxPopup = document.getElementById('skipInboxPopup');
+    const skipInboxBtn = document.getElementById('skipInboxBtn');
+    const selectedSkipInboxEmailsList = document.getElementById('selectedSkipInboxEmails');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    const clubsCheckbox = document.getElementById('clubsCheckbox');
+    const societiesCheckbox = document.getElementById('societiesCheckbox');
+    const departmentsCheckbox = document.getElementById('departmentsCheckbox');
+    const officesCheckbox = document.getElementById('officesCheckbox');
+    const googleClassroomCheckbox = document.getElementById('googleClassroomCheckbox');
+    const sharedFilesCheckbox = document.getElementById('sharedFilesCheckbox');
+
+    // Load JSON data
+    fetch('emails.json')
+      .then(response => response.json())
+      .then(data => {
+        emailData = data;
+      });
+
+    // Add keywords and make them removable
+    keywordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && keywordInput.value.trim()) {
+        const word = keywordInput.value.trim();
+        words.push(word);
+        displaySelectedItem(word, wordsList, words);
+        keywordInput.value = '';
+      }
+    });
+
+    // Display and select/deselect emails for "Email IDs"
+    emailInput.addEventListener('input', () => {
+      displayEmailDropdown(emailInput, emailList, emails, displaySelectedEmails);
+    });
+
+    skipInboxBtn.addEventListener('click', () => {
+      togglePopup(skipInboxPopup, selectedSkipInboxEmails, displaySelectedSkipInboxEmails);
+    });
+
+    function displaySelectedItem(item, listElement, array) {
+      const itemElement = document.createElement('div');
+      itemElement.className = 'selected-item';
+      itemElement.textContent = item;
+
+      // Add "X" button for removing items
+      const removeButton = document.createElement('button');
+      removeButton.className = 'remove-btn';
+      removeButton.textContent = 'X';
+      removeButton.onclick = () => {
+        array.splice(array.indexOf(item), 1);
+        itemElement.remove();
+      };
+
+      itemElement.appendChild(removeButton);
+      listElement.appendChild(itemElement);
+    }
+
+    function displayEmailDropdown(input, list, array, displayFunction) {
+      const query = input.value.toLowerCase();
+      list.innerHTML = '';
+      list.style.display = query ? 'block' : 'none';
+
+      emailData
+        .filter(item => item.Name_df.toLowerCase().includes(query) || item.Email.toLowerCase().includes(query))
+        .forEach(item => {
+          const emailElement = document.createElement('div');
+          emailElement.className = 'dropdown-item';
+          emailElement.textContent = `${item.Name_df} (${item.Email})`;
+          emailElement.onclick = () => {
+            if (array.includes(item.Email)) {
+              array.splice(array.indexOf(item.Email), 1);
+            } else {
+              array.push(item.Email);
+            }
+            displayFunction();
+            list.style.display = 'none';
+          };
+          list.appendChild(emailElement);
+        });
+    }
+
+    function togglePopup(popup, array, displayFunction) {
+      popup.innerHTML = '';
+      popup.style.display = popup.style.display === 'none' || popup.style.display === '' ? 'block' : 'none';
+
+      emailData.forEach(item => {
+        const emailButton = document.createElement('div');
+        emailButton.className = 'dropdown-item';
+        emailButton.textContent = `${item.Name_df} (${item.Email})`;
+        emailButton.onclick = () => {
+          if (array.includes(item.Email)) {
+            array.splice(array.indexOf(item.Email), 1);
+          } else {
+            array.push(item.Email);
+          }
+          displayFunction();
+          popup.style.display = 'none';
+        };
+        popup.appendChild(emailButton);
+      });
+    }
+
+    function displaySelectedEmails() {
+      selectedEmails.innerHTML = '';
+      emails.forEach(email => displaySelectedItem(email, selectedEmails, emails));
+    }
+
+    function displaySelectedSkipInboxEmails() {
+      selectedSkipInboxEmailsList.innerHTML = '';
+      selectedSkipInboxEmails.forEach(email => displaySelectedItem(email, selectedSkipInboxEmailsList, selectedSkipInboxEmails));
+    }
+
+    // XML generation function with specific filters for Google Classroom, Shared Files, and categories
+    function createXML() {
+      let xmlContent = `<?xml version='1.0' encoding='UTF-8'?>\n<feed xmlns='http://www.w3.org/2005/Atom' xmlns:apps='http://schemas.google.com/apps/2006'>\n`;
+
+      // Add keywords to "Priority" label
+      words.forEach(word => {
+        xmlContent += `<entry><category term='filter'></category><apps:property name='hasTheWord' value='${word}'/><apps:property name='label' value='Priority'/></entry>\n`;
+      });
+
+      // Add selected email IDs to "Priority" label
+      emails.forEach(email => {
+        xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='${email}'/><apps:property name='label' value='Priority'/></entry>\n`;
+      });
+
+      // Add selected skip inbox emails with archive option
+      selectedSkipInboxEmails.forEach(email => {
+        xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='${email}'/><apps:property name='shouldArchive' value='true'/></entry>\n`;
+      });
+
+      // Google Classroom and Shared Files filters
+      if (googleClassroomCheckbox.checked) {
+        xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='no-reply@classroom.google.com'/><apps:property name='label' value='Google Classroom'/></entry>\n`;
+      }
+      if (sharedFilesCheckbox.checked) {
+        xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='drive-shares-dm-noreply@google.com'/><apps:property name='label' value='Shared Drives'/></entry>\n`;
+      }
+
+      // Individual entries for Clubs, Societies, Departments, Offices based on checkbox selections
+      const categories = [
+        { checkbox: clubsCheckbox, type: 'Club', label: 'Clubs' },
+        { checkbox: societiesCheckbox, type: 'Society', label: 'Societies' },
+        { checkbox: departmentsCheckbox, type: 'Department', label: 'Departments' },
+        { checkbox: officesCheckbox, type: 'Offices', label: 'Offices' },
+      ];
+
+      categories.forEach(category => {
+        if (category.checkbox.checked) {
+          const categoryEmails = emailData.filter(item => item.Type && item.Type.trim() === category.type).map(item => item.Email);
+
+          // Create individual XML entries for each email
+          categoryEmails.forEach(email => {
+            xmlContent += `<entry><category term='filter'></category><apps:property name='from' value='${email}'/><apps:property name='label' value='${category.label}'/></entry>\n`;
+          });
+        }
+      });
+
+      xmlContent += '</feed>';
+      return xmlContent;
+    }
+
+    downloadBtn.addEventListener('click', () => {
+      const xmlContent = createXML();
+      const blob = new Blob([xmlContent], { type: 'application/xml' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'gmail-filters.xml';
+      link.click();
+    });
+  </script>
+
+</body>
+</html>

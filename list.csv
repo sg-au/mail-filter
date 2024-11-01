@@ -1,0 +1,159 @@
+,Name_df,Email,Type
+0, Anime Club,anime@ashoka.edu.in,Club
+1,Abhinaya,,Club
+2,Art and Design Collective,adc@ashoka.edu.in,Club
+3,Ashoka Business Club,businessclub@ashoka.edu.in,Club
+4,Ashoka Consulting  Club,consulting@ashoka.edu.in,Club
+5,Ashoka Debating Union,debating@ashoka.edu.in,Club
+6,Ashoka Investments Club,investmentsclub@ashoka.edu.in,Club
+7,Ashoka MUN Club,ashoka.mun@ashoka.edu.in,Club
+8,Ashoka Marketing Club,marketingclub@ashoka.edu.in,Club
+9,Ashoka University International Students Association (AUISA),newsletter@ashoka.edu.in,Club
+10,Ashoka University International Students Association (AUISA),no-reply@ashoka.edu.in,Club
+11,Ashoka University International Students Association (AUISA),systems@ashoka.edu.in,Club
+12,Ashoka University Queer Collective (AUQC ),newsletter@ashoka.edu.in,Club
+13,Ashoka University Queer Collective (AUQC ),no-reply@ashoka.edu.in,Club
+14,Ashoka University Queer Collective (AUQC ),systems@ashoka.edu.in,Club
+15,Ashoka University Society for Sustainable Development Goals,newsletter@ashoka.edu.in,Club
+16,Ashoka University Society for Sustainable Development Goals,no-reply@ashoka.edu.in,Club
+17,Ashoka University Society for Sustainable Development Goals,systems@ashoka.edu.in,Club
+18,Ashoka Women in Business and Leadership,awibnl@ashoka.edu.in,Club
+19,Caperture: The Photography Society,caperture@ashoka.edu.in,Club
+20,Clad - fashion club,,Club
+21,Cycling Club,ashokacyclingclub@ashoka.edu.in,Club
+22,Eeshto,,Club
+23,Enactus,,Club
+24,FarmFresh,,Club
+25,GirlUp Ujjiwan,,Club
+26,Hallyu,,Club
+27,Her Campus Ashoka,hcashoka@ashoka.edu.in,Club
+28,Hindvi,,Club
+29,Kalinga,,Club
+30,Khayal,,Club
+31,Kintsugi ,,Club
+32,Lang-up,,Club
+33,Mad Batter,,Club
+34,Navrang,filmsoc@ashoka.edu.in,Club
+35,Neev: The Community Engagement Club,neev@ashoka.edu.in,Club
+36,Orators' Club,orators@ashoka.edu.in,Club
+37,Pawsitive,,Club
+38,Quizzing club (Chakraview),,Club
+39,Red Brick Words,poetry@ashoka.edu.in,Club
+40,Rotaract Club,rotaract@ashoka.edu.in,Club
+41,Ruhi,ruhi@ashoka.edu.in,Club
+42,Siyahi,,Club
+43,Sports Enthusiast Club,sec@ashoka.edu.in,Club
+44,SOBAC,,Club
+45,The Comic Relief,thecomicrelief@ashoka.edu.in,Club
+46,The Feminist Collective,feministcollective@ashoka.edu.in,Club
+47,The Green Room,theatresociety@ashoka.edu.in,Club
+48,The Northeast Collective,northeastcollective@ashoka.edu.in,Club
+49,Vistaar,vistaar@ashoka.edu.in,Club
+50,Ashoka Tech Consulting Club,consulting@ashoka.edu.in,Club
+51,Ashoka Fintech Club,ashoka.mun@ashoka.edu.in,Club
+52,Iron Eagles,,Club
+53,Ashoka Data Society (ADS) ,ads@ashoka.edu.in,Society
+54,Epigraph: The Literary society,litsoc@ashoka.edu.in,Society
+55,PhySoc,philsoc@ashoka.edu.in,Society
+56,Philosophy Society,philsoc@ashoka.edu.in,Society
+57,Psychology Society ,psychology.society@ashoka.edu.in,Society
+58,Ashoka University Economics Society,econsoc@ashoka.edu.in,Society
+59,Ashoka Society for India Studies,asis@ashoka.edu.in,Society
+60,Women in Computing Society (WiCS),wics@ashoka.edu.in,Society
+61,Ashoka Political Science Society ,polsoc@ashoka.edu.in,Society
+62,The Computer Science Society (CS Soc),cs.society@ashoka.edu.in,Society
+63,Ashoka Public Policy Society (APPS),publicpolsoc@ashoka.edu.in,Society
+64,IEEE Ashoka Student Branch,ieee.asb@ashoka.edu.in,Society
+65,War Studies Society ,warsoc@ashoka.edu.in,Society
+66,Astronomy Society,astronomysociety@ashoka.edu.in,Society
+67,Ashoka Law Society ,law@ashoka.edu.in,Society
+68,AMFACS,amfacs@ashoka.edu.in,Society
+69,Mathematics Society,math.society@ashoka.edu.in,Society
+70,Biology Society ,biosoc@ashoka.edu.in,Society
+71,Ashoka Society for International Trade and Foreign Policy (ASITFP),asitfp@ashoka.edu.in,Society
+72,Ashoka Women In Finance Society,womeninfinance@ashoka.edu.in,Society
+73,The Ashoka Journal of Biosciences,biojournal@ashoka.edu.in,Society
+74,Ashoka Climate Change and Environmental Studies Society (ACCESS),evs.soc@ashoka.edu.in,Society
+75,Chemistry Society,chemsoc@ashoka.edu.in,Society
+76,Untitled: The Visual Arts Society,untitled.visualarts@ashoka.edu.in,Society
+77,Physics,physics.dept@ashoka.edu.in,Department
+78,Chemistry,chem.rep@ashoka.edu.in,Department
+79,Biology,biology@ashoka.edu.in,Department
+80,History,historyrepresentatives@ashoka.edu.in,Department
+81,IR,ir.rep@ashoka.edu.in,Department
+82,Pol Science,,Department
+83,Entrepreneurship,eclub@ashoka.edu.in,Department
+84,English,englishandcreativewriting@ashoka.edu.in,Department
+85,Media Studies,media.studies@ashoka.edu.in,Department
+86,CW,creativewriting.rep@ashoka.edu.in,Department
+87,Economics,econsoc@ashoka.edu.in,Department
+88,Finance,,Department
+89,Computer Science,cs.society@ashoka.edu.in,Department
+90,Philosophy,philsoc@ashoka.edu.in,Department
+91,PPE,ppe.rep@ashoka.edu.in,Department
+92,Mathematics,math.society@ashoka.edu.in,Department
+93,Psychology,psychology.society@ashoka.edu.in,Department
+94,EVS,evs.rep@ashoka.edu.in,Department
+95,Socio Anthro,,Department
+96,Performing Arts,,Department
+97,China Studies,chinastudies@ashoka.edu.in,Department
+98,Sanskrit Studies,,Department
+99,Visual Arts,untitled.visualarts@ashoka.edu.in,Department
+100,Physics,physics.dept@ashoka.edu.in,Department Representatives
+101,Chemistry,chem.rep@ashoka.edu.in,Department Representatives
+102,Biology,biology@ashoka.edu.in,Department Representatives
+103,History,historyrepresentatives@ashoka.edu.in,Department Representatives
+104,His-IR,,Department Representatives
+105,IR,ir.rep@ashoka.edu.in,Department Representatives
+106,Pol Science,,Department Representatives
+107,Entrepreneurship,eclub@ashoka.edu.in,Department Representatives
+108,English,englishandcreativewriting@ashoka.edu.in,Department Representatives
+109,Media Studies,media.studies@ashoka.edu.in,Department Representatives
+110,CW,creativewriting.rep@ashoka.edu.in,Department Representatives
+111,Economics,econsoc@ashoka.edu.in,Department Representatives
+112,Eco-Fin,,Department Representatives
+113,Eco-His,,Department Representatives
+114,Computer Science,cs.society@ashoka.edu.in,Department Representatives
+115,Philosophy,philsoc@ashoka.edu.in,Department Representatives
+116,PPE,ppe.rep@ashoka.edu.in,Department Representatives
+117,Mathematics,math.society@ashoka.edu.in,Department Representatives
+118,Psychology,psychology.society@ashoka.edu.in,Department Representatives
+119,EVS,evs.rep@ashoka.edu.in,Department Representatives
+120,Socio Anthro,,Department Representatives
+121,Performing Arts,,Department Representatives
+122,China Studies,chinastudies@ashoka.edu.in,Department Representatives
+123,Sanskrit Studies,,Department Representatives
+124,Visual Arts,untitled.visualarts@ashoka.edu.in,Department Representatives
+125,Centre for Studies in Gender and Sexuality,csgs@ashoka.edu.in,Centres
+126,Center for Entrepreneurship,eclub@ashoka.edu.in,Centres
+127,"Center for Digitisation, AI and Society",,
+128,Center for Sustainability,,
+129,Office of Post Graduate Studies,connect.postgraduate@ashoka.edu.in,Offices
+130,Office of Learning Support,ols@ashoka.edu.in,Offices
+131,Career Development Office,cdo@ashoka.edu.in,Offices
+132,Dining Ashoka,dining@ashoka.edu.in,Offices
+133,IT Helpdesk,philhelpdesk@ashoka.edu.in,Offices
+134,.,,
+135,Google Classroom,,Miscellaneous
+136,"Shared With Me (Google Documents, Drive, Slides)",,Miscellaneous
+137,Infirmary,,Miscellaneous
+138,Superset,,Miscellaneous
+139,.,,
+140,ABA,,Sports
+141,ABL,,Sports
+142,Cultural Ministry,culturalministry@ashoka.edu.in,Student Government
+143,Ministry of Technology,technology.ministry@ashoka.edu.in,Student Government
+144,Ministry of Community & Well Being,well.being@ashoka.edu.in,Student Government
+145,Ministry of Academic Affairs,academicaffairs.ministry@ashoka.edu.in,Student Government
+146,Sports Ministry,sports.ministry@ashoka.edu.in,Student Government
+147,Campus Life Ministry,campus.life@ashoka.edu.in,Student Government
+148,Environment Ministry,environmentministry@ashoka.edu.in,Student Government
+149,Student Government,sg@ashoka.edu.in,Student Government
+150,Lost & Found,,Student Government
+151,Inductions,,Student Government
+152,Promotions,,Student Government
+153,Events & Invitations,,Student Government
+154,Jobs & Internships,,Student Government
+155,Campaigns,,Student Government
+156,Fundraisers,,Student Government
+157,Surveys,,Student Government
